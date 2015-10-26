@@ -1,6 +1,35 @@
+body {
+	background: #eee;
+	margin: 0;
+}
+
+.wrapper {
+	width: 990px;
+	margin: 0 auto;
+}
+
+header {
+	background: #ddd;
+}
+
+header .wrapper {
+	padding: 1em 0 0 10em;
+	box-sizing: border-box;
+	background: url(https://avatars0.githubusercontent.com/u/13209832?v=3&s=200) no-repeat 0 50%;
+	background-size: 100px 100px;
+	min-height: 7em;
+}
+
+h1 {
+	margin: 0;
+	font-size: 2em;
+	font-weight: 400;
+}
+
 #grid li.included {
 	background: #cec;
 }
+
 #grid li.excluded {
 	background: #ffc;
 }
