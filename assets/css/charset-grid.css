@@ -1,0 +1,6 @@
+#grid li.included {
+	background: #cec;
+}
+#grid li.excluded {
+	background: #ffc;
+}
