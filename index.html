@@ -6,16 +6,45 @@
 		<link rel="stylesheet" href="assets/css/charset-grid.css">
 	</head>
 	<body>
+		<header>
+			<div class="wrapper">
+				<h1>Charset grid</h1>
+				<p>Peek into what characters are supported by fonts</p>
+			</div>
+		</header>
+
 		<form>
-			<select id="codepage" size="1">
-				<option selected>ASCII</option>
-			</select>
+			<aside>
+				<div class="wrapper">
+					<div class="styled-select subset">
+						<span>ASCII</span>
+						<select id="subset" size="1">
+							<option selected>ASCII</option>
+							<option>MES-1</option>
+							<option>MES-2</option>
+							<option>MES-3B</option>
+						</select>
+					</div>
+					<div class="styled-select view">
+						<span>Grid</span>
+						<select id="view" size="1">
+							<option selected>Grid</option>
+							<option>Table</option>
+							<option>Details</option>
+							<option>Rows</option>
+						</select>
+					</div>
+				</div>
+			</aside>
+
+			<ul id="grid">
+			</ul>
 		</form>
 
-		<ul id="grid">
-		</ul>
-
-		<footer>0.1.0</footer>
+		<footer>
+			<div>0.2.0</div>
+			<div>Created by the Source Foundry, licensed under MIT.</div>
+		</footer>
 
 		<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
 		<script src="//ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
