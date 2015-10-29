@@ -95,24 +95,37 @@ jQuery(document).ready(function () {
       .css({
         position: 'absolute',
         width: 'auto',
-        fontSize: '128px',
+        fontSize: '1000px',
         left: '-99999px'
       })
-      .appendTo(d),
+      .appendTo(d)[0],
+      k = {},
       b = function (b, d) {//console.info("Checking " + b + " with test string '" + d + "'");
-        return a.css('fontFamily', b)
-          .text(Array(100).join(d))
-          .width();
+        if (typeof k[b] === 'undefined') {
+          k[b] = {};
+        }
+        if (k[b][d]) {
+          return k[b][d];
+        }
+        a.style.fontFamily = b;
+        a.innerText = d;
+        k[b][d] = a.offsetWidth;
+
+        return k[b][d];
       },
       c = 'monospace',
       e = 'serif',
       f = 'sans-' + e,
-      g = ',';
+      g = ',',
+      h = $("html");
     window.fontSupportsChar = function (a, j) {
       return b(c, j) !== b(a + g + c, j) || b(e, j) !== b(a + g + e, j) || b(f, j) !== b(a + g + f, j);
     };
-    window.isFontAvailable = function (a) {console.info("isFontAvailable " + a);
-      return window.fontSupportsChar(a, 'wi');
+    window.isFontAvailable = function (a) {
+      if (a === "Hack") {
+        return window.fontSupportsChar(a, "w");
+      }
+      return h.hasClass("wf-" + a.toLowerCase().split("-").join("").split(" ").join("") + "-n4-active");
     };
   })($(document.body));
 
@@ -148,7 +161,9 @@ jQuery(document).ready(function () {
     if (isFontAvailable(face)) {
       console.info(face + " has loaded");
       fonts.push(face);
-      buildGrid(face);
+      setTimeout(function () {
+        buildGrid(face, $("#subset").val());
+      }, 500);
       return;
     }
     console.info(face + " not loaded yet");
@@ -159,28 +174,33 @@ jQuery(document).ready(function () {
   };
 
   var $list = $('#grid'),
-    buildGrid = function (face) {
+    buildGrid = function (face, subset) {
+      if (subset !== $("#subset").val()) {
+        return;
+      }
       var $charlist = $('<ul>');
       $('<li>')
         .append($('<strong>').text(face))
         .append($charlist)
         .appendTo($list);
-      for (var i in subsets['ASCII']) {
-        var code = subsets['ASCII'][i],
-          hex = code.toString(16).toUpperCase(),
-          char = String.fromCharCode(parseInt(code));
-        // prepend 0 till we reach 4 places
-        hex = Array(5 - hex.length).join('0') + hex;
+      for (var i in subsets[subset]) {
+        var data = subsets[subset][i];
+        var included = (skip.indexOf(data.hex) > -1 || fontSupportsChar(face, data.char));
+
         $('<li>')
-          .addClass((skip.indexOf(hex) > -1 || fontSupportsChar(face, char)) ? 'included' : 'excluded')
-          .append($('<span>').text(char))
-          .append($('<em>').text(hex))
+          .addClass(included ? 'included' : 'excluded')
+          .attr('title', 'U+' + data.hex + ' ' + data.char)
+          .attr('data-char', data.char.replace(" ", " "))
+          .append($('<span>')
+            .text(data.char.replace(" ", " "))
+            .css("fontFamily", face))
+          .append($('<em>').text(data.hex))
           .appendTo($charlist);
       }
     };
 
   var explodeSubsets = function () {
-    var subsets_exploded = {}, ranges, characters, range, start, end;
+    var subsets_exploded = {}, ranges, characters, range, start, end, hex;
     for (var i in subsets) {
       ranges     = subsets[i];
       characters = [];
@@ -197,13 +217,38 @@ jQuery(document).ready(function () {
         start = parseInt(start, 16);
         end = parseInt(end, 16);
         for (var k = start; k <= end; k++) {
-          characters.push(k);
+          hex = k.toString(16).toUpperCase();
+          hex = Array(5 - hex.length).join('0') + hex;
+          characters.push({hex: hex, char: String.fromCharCode(k)});
         }
       }
       subsets_exploded[i] = characters;
     }
     subsets = subsets_exploded;
   };
+
+  var doSetTimeout = function (i, subset) {
+    setTimeout(function () {
+      buildGrid(fonts[i], subset);
+    }, 500);
+  };
+  $("#subset").change(function (ev) {
+    var subset = $(this).val();
+    $(this).parent().find("span").text(subset);
+    $("#grid").empty();
+    for (var i = 0; i < fonts.length; i++) {
+      doSetTimeout(i, subset);
+    };
+  });
+  $("#view").change(function (ev) {
+    var view = $(this).val();
+    $(this).parent().find("span").text(view);
+    $(document.body)
+      .removeClass("view-Table")
+      .removeClass("view-Details")
+      .removeClass("view-Rows")
+      .addClass("view-" + view);
+  });
 
   explodeSubsets();
   checkFontLoaded('Hack');
