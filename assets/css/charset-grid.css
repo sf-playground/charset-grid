@@ -10,6 +10,7 @@ body {
 
 header {
 	background: #ddd;
+	margin: 0;
 }
 
 header .wrapper {
@@ -20,10 +21,40 @@ header .wrapper {
 	min-height: 7em;
 }
 
+header p {
+	margin-bottom: 0;
+}
+
 h1 {
 	margin: 0;
 	font-size: 2em;
 	font-weight: 400;
+}
+
+aside {
+	margin: 0;
+}
+
+#grid {
+	margin: 0;
+	list-style: none;
+}
+
+#grid > li {
+	margin: 0 .5em .5em 0;
+	padding: .5em 1em;
+	width: 10em;
+	float: left;
+	background: #ccc;
+	position: relative;
+}
+
+#grid li strong {
+	display: block;
+	white-space: nowrap;
+	width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 #grid li.included {
@@ -35,6 +66,7 @@ h1 {
 }
 
 footer {
+	clear: left;
 	background: #666;
 	color: #fff;
 	text-align: center;
