@@ -106,20 +106,24 @@ jQuery(document).ready(function () {
         position: 'absolute',
         width: 'auto',
         fontSize: '1000px',
-        left: '-99999px'
+        left: '-99999px',
+        top: '-99999px'
       })
       .appendTo(d)[0],
       k = {},
-      b = function (b, d) {//console.info("Checking " + b + " with test string '" + d + "'");
+      b = function (b, d) {
+        console.info("Checking " + b + " with test string '" + d + "'");
         if (typeof k[b] === 'undefined') {
           k[b] = {};
         }
         if (k[b][d]) {
+          console.info("Found cache, returning " + k[b][d]);
           return k[b][d];
         }
         a.style.fontFamily = b;
-        a.innerText = d;
+        a.textContent = Array(50).join(d);
         k[b][d] = a.offsetWidth;
+        console.info("Rendered width is " + k[b][d]);
 
         return k[b][d];
       },
@@ -129,6 +133,7 @@ jQuery(document).ready(function () {
       g = ',',
       h = $("html");
     window.fontSupportsChar = function (a, j) {
+      console.info("fontSupportsChar " + a + " " + j);
       return b(c, j) !== b(a + g + c, j) || b(e, j) !== b(a + g + e, j) || b(f, j) !== b(a + g + f, j);
     };
     window.isFontAvailable = function (a) {
@@ -196,13 +201,14 @@ jQuery(document).ready(function () {
       for (var i in subsets[subset]) {
         var data = subsets[subset][i];
         var included = (skip.indexOf(data.hex) > -1 || fontSupportsChar(face, data.char));
+        console.info(face + " supports " + data.char + ": " + (included?"yes":"no"));
 
         $('<li>')
           .addClass(included ? 'included' : 'excluded')
           .attr('title', 'U+' + data.hex + ' ' + data.char)
           .attr('data-char', data.char.replace(" ", " "))
           .append($('<span>')
-            .text(data.char.replace(" ", " "))
+            .text(data.char.replace(" ", " ").replace("­", " "))
             .css("fontFamily", face))
           .append($('<em>').text(data.hex))
           .appendTo($charlist);
@@ -249,7 +255,8 @@ jQuery(document).ready(function () {
     for (var i = 0; i < fonts.length; i++) {
       doSetTimeout(i, subset);
     };
-  });
+  })
+  .trigger("change");
   $("#view").change(function (ev) {
     var view = $(this).val();
     $(this).parent().find("span").text(view);
@@ -258,7 +265,8 @@ jQuery(document).ready(function () {
       .removeClass("view-Details")
       .removeClass("view-Rows")
       .addClass("view-" + view);
-  });
+  })
+  .trigger("change");
 
   explodeSubsets();
   checkFontLoaded('Hack');
