@@ -255,7 +255,8 @@ jQuery(document).ready(function () {
     for (var i = 0; i < fonts.length; i++) {
       doSetTimeout(i, subset);
     };
-  });
+  })
+  .trigger("change");
   $("#view").change(function (ev) {
     var view = $(this).val();
     $(this).parent().find("span").text(view);
@@ -264,7 +265,8 @@ jQuery(document).ready(function () {
       .removeClass("view-Details")
       .removeClass("view-Rows")
       .addClass("view-" + view);
-  });
+  })
+  .trigger("change");
 
   explodeSubsets();
   checkFontLoaded('Hack');
