@@ -2,6 +2,8 @@ body {
 	font-family: 'Times New Roman', Times, serif;
 	background: #eee;
 	margin: 0;
+	position: relative;
+	min-height: 60em;
 }
 
 .wrapper {
@@ -82,7 +84,7 @@ html.wf-loading .styled-select.face {
 #grid > li {
 	margin: 0 .5em .5em 0;
 	padding: .5em 5px;
-	width: 139px;
+	width: 129px;
 	float: left;
 	background: #ccc;
 	position: relative;
@@ -147,10 +149,7 @@ html.wf-loading .styled-select.face {
 	font-size: 4em;
 }
 
-.view-Details #grid > li {
-	width: 526px;
-}
-
+.view-Details #grid > li,
 .view-Details #grid li ul {
 	width: 516px;
 }
@@ -198,8 +197,16 @@ html.wf-loading .styled-select.face {
 	opacity: .3;
 }
 
-footer {
+br.clearfix {
 	clear: left;
+}
+
+footer {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	box-sizing: border-box;
 	background: #666;
 	color: #fff;
 	text-align: center;
