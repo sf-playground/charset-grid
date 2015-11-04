@@ -119,7 +119,7 @@ jQuery(document).ready(function () {
         if (typeof k[b] === 'undefined') {
           k[b] = {};
         }
-        if (d !== 'w' && k[b][d]) {
+        if (d !== '@' && k[b][d]) {
           debug && console.info('Found cache, returning ' + k[b][d]);
           return k[b][d];
         }
@@ -140,10 +140,8 @@ jQuery(document).ready(function () {
       return b(c, j) !== b(a + g + c, j) || b(e, j) !== b(a + g + e, j) || b(f, j) !== b(a + g + f, j);
     };
     window.isFontAvailable = function (a) {
-      if (a === "Hack") {
-        return window.fontSupportsChar(a, "w");
-      }
-      return h.hasClass("wf-" + a.toLowerCase().split("-").join("").split(" ").join("") + "-n4-active");
+      return h.hasClass('wf-' + a.toLowerCase().split('-').join('').split(' ').join('') + '-n4-active')
+        && fontSupportsChar(a, '@');
     };
     window.isFontTimedOut = function (a) {
       return h.hasClass('wf-' + a.toLowerCase().split('-').join('').split(' ').join('') + '-n4-inactive');
