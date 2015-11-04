@@ -134,7 +134,7 @@ jQuery(document).ready(function () {
       e = 'serif',
       f = 'sans-' + e,
       g = ',',
-      h = $("html");
+      h = $('html');
     window.fontSupportsChar = function (a, j) {
       debug && console.info('fontSupportsChar ' + a + ' ' + j);
       return b(c, j) !== b(a + g + c, j) || b(e, j) !== b(a + g + e, j) || b(f, j) !== b(a + g + f, j);
@@ -185,7 +185,7 @@ jQuery(document).ready(function () {
       debug && console.info(face + ' has loaded');
       fonts.push(face);
       setTimeout(function () {
-        buildGrid(face, $("#subset").val());
+        buildGrid(face, $('#subset').val());
       }, 500);
       return;
     }
@@ -201,7 +201,7 @@ jQuery(document).ready(function () {
 
   var $list = $('#grid'),
     buildGrid = function (face, subset) {
-      if (subset !== $("#subset").val()) {
+      if (subset !== $('#subset').val()) {
         return;
       }
       var $charlist = $('<ul>'),
@@ -217,10 +217,10 @@ jQuery(document).ready(function () {
         $('<li>')
           .addClass(included ? 'included' : 'excluded')
           .attr('title', 'U+' + data.hex + ' ' + data.char)
-          .attr('data-char', data.char.replace(" ", " "))
+          .attr('data-char', data.char.replace(' ', ' '))
           .append($('<span>')
-            .text(data.char.replace(" ", " ").replace("­", " "))
-            .css("fontFamily", face))
+            .text(data.char.replace(' ', ' ').replace('­', ' '))
+            .css('fontFamily', face))
           .append($('<em>').text(data.hex))
           .appendTo($charlist);
       }
@@ -267,25 +267,25 @@ jQuery(document).ready(function () {
       buildGrid(fonts[i], subset);
     }, 500);
   };
-  $("#subset").change(function (ev) {
+  $('#subset').change(function (ev) {
     var subset = $(this).val();
-    $(this).parent().find("span").text(subset);
-    $("#grid").empty();
+    $(this).parent().find('span').text(subset);
+    $('#grid').empty();
     for (var i = 0; i < fonts.length; i++) {
       doSetTimeout(i, subset);
     };
   })
-  .trigger("change");
-  $("#view").change(function (ev) {
+  .trigger('change');
+  $('#view').change(function (ev) {
     var view = $(this).val();
-    $(this).parent().find("span").text(view);
+    $(this).parent().find('span').text(view);
     $(document.body)
-      .removeClass("view-Table")
-      .removeClass("view-Details")
-      .removeClass("view-Rows")
-      .addClass("view-" + view);
+      .removeClass('view-Table')
+      .removeClass('view-Details')
+      .removeClass('view-Rows')
+      .addClass('view-' + view);
   })
-  .trigger("change");
+  .trigger('change');
 
   explodeSubsets();
   loadWebfonts();
