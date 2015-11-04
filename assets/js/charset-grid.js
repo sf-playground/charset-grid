@@ -4,7 +4,6 @@
 /* global jQuery */
 jQuery(document).ready(function () {
   var faces = [
-    'Hack',
     'Andale Mono',
     'Anonymous Pro',
     'Bitstream Vera Sans Mono',
@@ -17,6 +16,7 @@ jQuery(document).ready(function () {
     'Envy Code R',
     'Fantasque Sans Mono',
     'Fira Mono',
+    'Hack',
     'Hasklig',
     'Inconsolata',
     'Iosevka',
@@ -41,15 +41,15 @@ jQuery(document).ready(function () {
     'Terminus',
     'Ubuntu Mono'
   ],
-    webfonts = [
+    webfonts_remote = [
       'Anonymous Pro',
-      'Bitstream Vera Sans Mono',
+      'Consolas',
+      'Courier New',
       'Cutive Mono',
       'Droid Sans Mono',
       'Fira Mono',
+      'Hack',
       'Inconsolata',
-      'Liberation Mono',
-      'Luxi Mono',
       'Oxygen Mono',
       'PT Mono',
       'Roboto Mono',
@@ -148,28 +148,32 @@ jQuery(document).ready(function () {
   var loadWebfonts = function () {
     for (var i in faces) {
       var face = faces[i];
-      if (!isFontAvailable(face)
-        && face !== 'Hack' // TODO Use webfont if Hack is not locally installed
-        && webfonts.indexOf(face) > -1
-        ) {console.info("Loading " + face + " as web font");
 
-        // instruct the loader to fetch this font for us
-        var face_folder = face.toLowerCase().split(' ').join('-'),
-          config = webfonts_local.indexOf(face) > -1
-            ? {
-              custom: {
-                families: [face],
-                urls: ['assets/fonts/' + face_folder + '/webfont.css']
-              }
+      console.info('Loading ' + face + ' as web font');
+
+      // instruct the loader to fetch this font for us
+      var face_folder = face.toLowerCase().split(' ').join('-'),
+        config = webfonts_local.indexOf(face) > -1
+          ? { // webfont included in this repo
+            custom: {
+              families: [face],
+              urls: ['assets/fonts/local/' + face_folder + '/webfont.css']
             }
-            : {
-              google: {
-                families: [face]
-              }
-            };
-        WebFont.load(config);
-        checkFontLoaded(face);
-      }
+          }
+          : webfonts_remote.indexOf(face) > -1
+          ? { // webfont to load from remote provider (e.g. Google), see CSS files
+            custom: {
+              families: [face],
+              urls: ['assets/fonts/remote/' + face_folder + '.css']
+            }
+          }
+          : { // font to load from the local computer
+            custom: {
+              families: [face]
+            }
+          };
+      WebFont.load(config);
+      checkFontLoaded(face);
     }
   };
 
@@ -278,6 +282,5 @@ jQuery(document).ready(function () {
   .trigger("change");
 
   explodeSubsets();
-  checkFontLoaded('Hack');
   loadWebfonts();
 });
