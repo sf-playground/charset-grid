@@ -265,7 +265,7 @@ jQuery(document).ready(function () {
   var doSetTimeout = function (i, subset) {
     setTimeout(function () {
       buildGrid(fonts[i], subset);
-    }, 500);
+    }, 100 * i);
   };
   $('#subset').change(function (ev) {
     var subset = $(this).val();
