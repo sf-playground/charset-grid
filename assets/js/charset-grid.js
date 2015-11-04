@@ -4,44 +4,45 @@
 /* global WebFont */
 /* global jQuery */
 jQuery(document).ready(function () {
-  var faces = [
-    'Andale Mono',
-    'Anonymous Pro',
-    'Bitstream Vera Sans Mono',
-    'Consolas',
-    'Courier',
-    'Courier New',
-    'Cutive Mono',
-    'DejaVu Sans Mono',
-    'Droid Sans Mono',
-    'Envy Code R',
-    'Fantasque Sans Mono',
-    'Fira Mono',
-    'Hack',
-    'Hasklig',
-    'Inconsolata',
-    'Iosevka',
-    'Liberation Mono',
-    'Lucida Console',
-    'Luculent',
-    'Luxi Mono',
-    'Menlo',
-    'Meslo LG L',
-    'Meslo LG M',
-    'Meslo LG S',
-    'Monaco',
-    'Monofur',
-    'Monoid',
-    'Oxygen Mono',
-    'Panic Sans',
-    'Pragmata Pro',
-    'PT Mono',
-    'Roboto Mono',
-    'Segoe UI Mono',
-    'Source Code Pro',
-    'Terminus',
-    'Ubuntu Mono'
-  ],
+  var debug = false,
+      faces = [
+      'Andale Mono',
+      'Anonymous Pro',
+      'Bitstream Vera Sans Mono',
+      'Consolas',
+      'Courier',
+      'Courier New',
+      'Cutive Mono',
+      'DejaVu Sans Mono',
+      'Droid Sans Mono',
+      'Envy Code R',
+      'Fantasque Sans Mono',
+      'Fira Mono',
+      'Hack',
+      'Hasklig',
+      'Inconsolata',
+      'Iosevka',
+      'Liberation Mono',
+      'Lucida Console',
+      'Luculent',
+      'Luxi Mono',
+      'Menlo',
+      'Meslo LG L',
+      'Meslo LG M',
+      'Meslo LG S',
+      'Monaco',
+      'Monofur',
+      'Monoid',
+      'Oxygen Mono',
+      'Panic Sans',
+      'Pragmata Pro',
+      'PT Mono',
+      'Roboto Mono',
+      'Segoe UI Mono',
+      'Source Code Pro',
+      'Terminus',
+      'Ubuntu Mono'
+    ],
     webfonts_remote = [
       'Anonymous Pro',
       'Consolas',
@@ -114,18 +115,18 @@ jQuery(document).ready(function () {
       .appendTo(d)[0],
       k = {},
       b = function (b, d) {
-        console.info("Checking " + b + " with test string '" + d + "'");
+        debug && console.info('Checking ' + b + ' with test string \'' + d + '\'');
         if (typeof k[b] === 'undefined') {
           k[b] = {};
         }
         if (d !== 'w' && k[b][d]) {
-          console.info("Found cache, returning " + k[b][d]);
+          debug && console.info('Found cache, returning ' + k[b][d]);
           return k[b][d];
         }
         a.style.fontFamily = b;
         a.textContent = Array(50).join(d);
         k[b][d] = a.offsetWidth;
-        console.info("Rendered width is " + k[b][d]);
+        debug && console.info('Rendered width is ' + k[b][d]);
 
         return k[b][d];
       },
@@ -135,7 +136,7 @@ jQuery(document).ready(function () {
       g = ',',
       h = $("html");
     window.fontSupportsChar = function (a, j) {
-      console.info("fontSupportsChar " + a + " " + j);
+      debug && console.info('fontSupportsChar ' + a + ' ' + j);
       return b(c, j) !== b(a + g + c, j) || b(e, j) !== b(a + g + e, j) || b(f, j) !== b(a + g + f, j);
     };
     window.isFontAvailable = function (a) {
@@ -153,7 +154,7 @@ jQuery(document).ready(function () {
     for (var i in faces) {
       var face = faces[i];
 
-      console.info('Loading ' + face + ' as web font');
+      debug && console.info('Loading ' + face + ' as web font');
 
       // instruct the loader to fetch this font for us
       var face_folder = face.toLowerCase().split(' ').join('-'),
@@ -183,7 +184,7 @@ jQuery(document).ready(function () {
 
   var checkFontLoaded = function (face) {
     if (isFontAvailable(face)) {
-      console.info(face + " has loaded");
+      debug && console.info(face + ' has loaded');
       fonts.push(face);
       setTimeout(function () {
         buildGrid(face, $("#subset").val());
@@ -191,10 +192,9 @@ jQuery(document).ready(function () {
       return;
     }
     if (isFontTimedOut(face)) {
-      console.info(face + ' is not available');
+      debug && console.info(face + ' is not available');
     } else {
-      console.info(face + " not loaded yet");
-      // not loaded yet, retry later
+      debug && console.info(face + ' not loaded yet');
       setTimeout(function () {
         checkFontLoaded(face);
       }, 500);
@@ -214,7 +214,7 @@ jQuery(document).ready(function () {
         var included = (skip.indexOf(data.hex) > -1 || fontSupportsChar(face, data.char));
         included || chars_missing++;
 
-        console.info(face + " supports " + data.char + ": " + (included?"yes":"no"));
+        debug && console.info(face + ' supports ' + data.char + ': ' + (included ? 'yes' : 'no'));
 
         $('<li>')
           .addClass(included ? 'included' : 'excluded')
