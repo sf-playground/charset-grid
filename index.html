@@ -17,21 +17,30 @@
 			<aside>
 				<div class="wrapper">
 					<div class="styled-select subset">
-						<span>ASCII</span>
+						<span></span>
 						<select id="subset" size="1">
-							<option selected>ASCII</option>
+							<!--<option selected>Debug</option>-->
+							<option>ASCII</option>
 							<option>MES-1</option>
 							<option>MES-2</option>
-							<option>MES-3B</option>
+							<!--<option>MES-3B</option>-->
 						</select>
 					</div>
 					<div class="styled-select view">
-						<span>Grid</span>
+						<span></span>
 						<select id="view" size="1">
-							<option selected>Grid</option>
+							<option>Score</option>
+							<option>Grid</option>
 							<option>Table</option>
 							<option>Details</option>
 							<option>Rows</option>
+						</select>
+					</div>
+					<div class="styled-select sort">
+						<span></span>
+						<select id="sort" size="1">
+							<option value="alphabetically">Sort A-Z</option>
+							<option value="percentage">Sort % complete</option>
 						</select>
 					</div>
 				</div>
@@ -44,7 +53,7 @@
 		<br class="clearfix">
 
 		<footer>
-			<div>0.2.1</div>
+			<div>0.3.0-dev</div>
 			<div>Created by the Source Foundry, licensed under MIT.</div>
 		</footer>
 

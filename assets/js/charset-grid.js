@@ -1,55 +1,57 @@
 /* global fontSupportsChar */
 /* global isFontAvailable */
+/* global isFontTimedOut */
 /* global WebFont */
 /* global jQuery */
 jQuery(document).ready(function () {
-  var faces = [
-    'Hack',
-    'Andale Mono',
-    'Anonymous Pro',
-    'Bitstream Vera Sans Mono',
-    'Consolas',
-    'Courier',
-    'Courier New',
-    'Cutive Mono',
-    'DejaVu Sans Mono',
-    'Droid Sans Mono',
-    'Envy Code R',
-    'Fantasque Sans Mono',
-    'Fira Mono',
-    'Hasklig',
-    'Inconsolata',
-    'Iosevka',
-    'Liberation Mono',
-    'Lucida Console',
-    'Luculent',
-    'Luxi Mono',
-    'Menlo',
-    'Meslo LG L',
-    'Meslo LG M',
-    'Meslo LG S',
-    'Monaco',
-    'Monofur',
-    'Monoid',
-    'Oxygen Mono',
-    'Panic Sans',
-    'Pragmata Pro',
-    'PT Mono',
-    'Roboto Mono',
-    'Segoe UI Mono',
-    'Source Code Pro',
-    'Terminus',
-    'Ubuntu Mono'
-  ],
-    webfonts = [
+  var debug = false,
+      faces = [
+      'Andale Mono',
       'Anonymous Pro',
       'Bitstream Vera Sans Mono',
+      'Consolas',
+      'Courier',
+      'Courier New',
+      'Cutive Mono',
+      'DejaVu Sans Mono',
+      'Droid Sans Mono',
+      'Envy Code R',
+      'Fantasque Sans Mono',
+      'Fira Mono',
+      'Hack',
+      'Hasklig',
+      'Inconsolata',
+      'Iosevka',
+      'Liberation Mono',
+      'Lucida Console',
+      'Luculent',
+      'Luxi Mono',
+      'Menlo',
+      'Meslo LG L',
+      'Meslo LG M',
+      'Meslo LG S',
+      'Monaco',
+      'Monofur',
+      'Monoid',
+      'Oxygen Mono',
+      'Panic Sans',
+      'Pragmata Pro',
+      'PT Mono',
+      'Roboto Mono',
+      'Segoe UI Mono',
+      'Source Code Pro',
+      'Terminus',
+      'Ubuntu Mono'
+    ],
+    webfonts_remote = [
+      'Anonymous Pro',
+      'Consolas',
+      'Courier New',
       'Cutive Mono',
       'Droid Sans Mono',
       'Fira Mono',
+      'Hack',
       'Inconsolata',
-      'Liberation Mono',
-      'Luxi Mono',
       'Oxygen Mono',
       'PT Mono',
       'Roboto Mono',
@@ -62,6 +64,7 @@ jQuery(document).ready(function () {
       'Luxi Mono'
     ],
     subsets = {
+      'Debug': ['0040'],
       'ASCII': ['0020-007F'],
       'MES-1': ['0020-007E', '00A0-00FF', '0100-0113', '0116-012B', '012E-014D', '0150-017E',
         '02C7', '02D8-02DB', '02DD', '2015', '2018-2019', '201C-201D', '20AC', '2122', '2126',
@@ -96,7 +99,8 @@ jQuery(document).ready(function () {
         '2300-237B', '237D-239A', '2440-244A', '2500-2595', '25A0-25F7', '2600-2613',
         '2619-2671', 'FB00-FB06', 'FB13-FB17', 'FE20-FE23', 'FFF9-FFFD']
     },
-    skip = ['0020', '00AD'],
+    skip = ['0020', '007F', '00AD'], // space, DELETE, soft-hyphen
+    scores = ['A+', 'A', 'B', 'C', 'D', 'E', 'F'],
     fonts = [];
 
   /* Font, char checkers */
@@ -112,18 +116,18 @@ jQuery(document).ready(function () {
       .appendTo(d)[0],
       k = {},
       b = function (b, d) {
-        console.info("Checking " + b + " with test string '" + d + "'");
+        debug && console.info('Checking ' + b + ' with test string \'' + d + '\'');
         if (typeof k[b] === 'undefined') {
           k[b] = {};
         }
-        if (k[b][d]) {
-          console.info("Found cache, returning " + k[b][d]);
+        if (d !== '@' && k[b][d]) {
+          debug && console.info('Found cache, returning ' + k[b][d]);
           return k[b][d];
         }
         a.style.fontFamily = b;
         a.textContent = Array(50).join(d);
         k[b][d] = a.offsetWidth;
-        console.info("Rendered width is " + k[b][d]);
+        debug && console.info('Rendered width is ' + k[b][d]);
 
         return k[b][d];
       },
@@ -131,87 +135,135 @@ jQuery(document).ready(function () {
       e = 'serif',
       f = 'sans-' + e,
       g = ',',
-      h = $("html");
+      h = $('html');
     window.fontSupportsChar = function (a, j) {
-      console.info("fontSupportsChar " + a + " " + j);
+      debug && console.info('fontSupportsChar ' + a + ' ' + j);
       return b(c, j) !== b(a + g + c, j) || b(e, j) !== b(a + g + e, j) || b(f, j) !== b(a + g + f, j);
     };
     window.isFontAvailable = function (a) {
-      if (a === "Hack") {
-        return window.fontSupportsChar(a, "w");
-      }
-      return h.hasClass("wf-" + a.toLowerCase().split("-").join("").split(" ").join("") + "-n4-active");
+      return h.hasClass('wf-' + a.toLowerCase().split('-').join('').split(' ').join('') + '-n4-active')
+        && fontSupportsChar(a, '@');
+    };
+    window.isFontTimedOut = function (a) {
+      return h.hasClass('wf-' + a.toLowerCase().split('-').join('').split(' ').join('') + '-n4-inactive');
     };
   })($(document.body));
 
   var loadWebfonts = function () {
     for (var i in faces) {
       var face = faces[i];
-      if (!isFontAvailable(face)
-        && face !== 'Hack' // TODO Use webfont if Hack is not locally installed
-        && webfonts.indexOf(face) > -1
-        ) {console.info("Loading " + face + " as web font");
 
-        // instruct the loader to fetch this font for us
-        var face_folder = face.toLowerCase().split(' ').join('-'),
-          config = webfonts_local.indexOf(face) > -1
-            ? {
-              custom: {
-                families: [face],
-                urls: ['assets/fonts/' + face_folder + '/webfont.css']
-              }
+      debug && console.info('Loading ' + face + ' as web font');
+
+      // instruct the loader to fetch this font for us
+      var face_folder = face.toLowerCase().split(' ').join('-'),
+        config = webfonts_local.indexOf(face) > -1
+          ? { // webfont included in this repo
+            custom: {
+              families: [face],
+              urls: ['assets/fonts/local/' + face_folder + '/webfont.css']
             }
-            : {
-              google: {
-                families: [face]
-              }
-            };
-        WebFont.load(config);
-        checkFontLoaded(face);
-      }
+          }
+          : webfonts_remote.indexOf(face) > -1
+          ? { // webfont to load from remote provider (e.g. Google), see CSS files
+            custom: {
+              families: [face],
+              urls: ['assets/fonts/remote/' + face_folder + '.css']
+            }
+          }
+          : { // font to load from the local computer
+            custom: {
+              families: [face]
+            }
+          };
+      WebFont.load(config);
+      checkFontLoaded(face);
     }
   };
 
   var checkFontLoaded = function (face) {
     if (isFontAvailable(face)) {
-      console.info(face + " has loaded");
+      debug && console.info(face + ' has loaded');
       fonts.push(face);
       setTimeout(function () {
-        buildGrid(face, $("#subset").val());
+        buildGrid(face, $('#subset').val());
       }, 500);
       return;
     }
-    console.info(face + " not loaded yet");
-    // not loaded yet, retry later
-    setTimeout(function () {
-      checkFontLoaded(face);
-    }, 500);
+    if (isFontTimedOut(face)) {
+      debug && console.info(face + ' is not available');
+    } else {
+      debug && console.info(face + ' not loaded yet');
+      setTimeout(function () {
+        checkFontLoaded(face);
+      }, 500);
+    }
   };
 
   var $list = $('#grid'),
     buildGrid = function (face, subset) {
-      if (subset !== $("#subset").val()) {
+      if (subset !== $('#subset').val()) {
         return;
       }
-      var $charlist = $('<ul>');
-      $('<li>')
-        .append($('<strong>').text(face))
-        .append($charlist)
-        .appendTo($list);
+      var $charlist = $('<ul>'),
+        chars = subsets[subset].length,
+        chars_missing = 0,
+        $items = $list.find('> li'),
+        $item,
+        percentage,
+        score,
+        $item_new;
       for (var i in subsets[subset]) {
         var data = subsets[subset][i];
         var included = (skip.indexOf(data.hex) > -1 || fontSupportsChar(face, data.char));
-        console.info(face + " supports " + data.char + ": " + (included?"yes":"no"));
+        included || chars_missing++;
+
+        debug && console.info(face + ' supports ' + data.char + ': ' + (included ? 'yes' : 'no'));
 
         $('<li>')
           .addClass(included ? 'included' : 'excluded')
           .attr('title', 'U+' + data.hex + ' ' + data.char)
-          .attr('data-char', data.char.replace(" ", " "))
+          .attr('data-char', data.char.replace(' ', ' '))
           .append($('<span>')
-            .text(data.char.replace(" ", " ").replace("­", " "))
-            .css("fontFamily", face))
+            .text(data.char.replace(' ', ' ').replace('­', ' '))
+            .css('fontFamily', face))
           .append($('<em>').text(data.hex))
           .appendTo($charlist);
+      }
+      percentage = Math.round((chars - chars_missing) / chars * 1000) / 10;
+      score = Math.ceil(6 * (chars_missing / chars));
+      $item_new = $('<li>')
+        .append($('<strong>')
+          .attr('title', chars_missing + ' of ' + chars + ' characters are missing in ' + face)
+          .html('<span>' + percentage + '%</span> ' + face)
+        )
+        .append($('<i>').text(scores[score]))
+        .addClass(chars_missing > 0 ? 'incomplete' : 'complete')
+        .addClass('score-' + score)
+        .attr('data-percentage', percentage)
+        .attr('data-font', face)
+        .append($charlist);
+
+      debug && console.info('inserting ' + face);
+
+      if (!$items.length) {
+        $list.append($item_new);
+      } else {
+        for (i = 0; i < $items.length; i++) {
+          $item = $items.eq(i);
+          // insert new item before first item that's larger than the new one
+          if ($(document.body).hasClass('sort-percentage') && $item.attr('data-percentage') < percentage) {
+            $item_new.insertBefore($item);
+            break;
+          }
+          if ($item.attr('data-font') > face) {
+            $item_new.insertBefore($item);
+            break;
+          }
+        };
+        if (i === $items.length) {
+          $list.append($item_new);
+        }
       }
     };
 
@@ -246,29 +298,40 @@ jQuery(document).ready(function () {
   var doSetTimeout = function (i, subset) {
     setTimeout(function () {
       buildGrid(fonts[i], subset);
-    }, 500);
+    }, 100 * i);
   };
-  $("#subset").change(function (ev) {
+  $('#subset').change(function (ev) {
     var subset = $(this).val();
-    $(this).parent().find("span").text(subset);
-    $("#grid").empty();
+    $(this).parent().find('span').text(subset);
+    $('#grid').empty();
     for (var i = 0; i < fonts.length; i++) {
       doSetTimeout(i, subset);
     };
   })
-  .trigger("change");
-  $("#view").change(function (ev) {
+  .trigger('change');
+  $('#view').change(function (ev) {
     var view = $(this).val();
-    $(this).parent().find("span").text(view);
+    $(this).parent().find('span').text(view);
     $(document.body)
-      .removeClass("view-Table")
-      .removeClass("view-Details")
-      .removeClass("view-Rows")
-      .addClass("view-" + view);
+      .removeClass('view-Score')
+      .removeClass('view-Table')
+      .removeClass('view-Details')
+      .removeClass('view-Rows')
+      .addClass('view-' + view);
   })
-  .trigger("change");
+  .trigger('change');
+  $('#sort').change(function (ev) {
+    var sort = $(this).val(),
+      displayVal = $(this).find('option:selected').text();
+    $(this).parent().find('span').text(displayVal);
+    $(document.body)
+      .removeClass('sort-alphabetically')
+      .removeClass('sort-percentage')
+      .addClass('sort-' + sort);
+    $('#subset').trigger('change');
+  })
+  .trigger('change');
 
   explodeSubsets();
-  checkFontLoaded('Hack');
   loadWebfonts();
 });
