@@ -1,5 +1,6 @@
 /* global fontSupportsChar */
 /* global isFontAvailable */
+/* global isFontTimedOut */
 /* global WebFont */
 /* global jQuery */
 jQuery(document).ready(function () {
@@ -143,6 +144,9 @@ jQuery(document).ready(function () {
       }
       return h.hasClass("wf-" + a.toLowerCase().split("-").join("").split(" ").join("") + "-n4-active");
     };
+    window.isFontTimedOut = function (a) {
+      return h.hasClass('wf-' + a.toLowerCase().split('-').join('').split(' ').join('') + '-n4-inactive');
+    };
   })($(document.body));
 
   var loadWebfonts = function () {
@@ -186,11 +190,15 @@ jQuery(document).ready(function () {
       }, 500);
       return;
     }
-    console.info(face + " not loaded yet");
-    // not loaded yet, retry later
-    setTimeout(function () {
-      checkFontLoaded(face);
-    }, 500);
+    if (isFontTimedOut(face)) {
+      console.info(face + ' is not available');
+    } else {
+      console.info(face + " not loaded yet");
+      // not loaded yet, retry later
+      setTimeout(function () {
+        checkFontLoaded(face);
+      }, 500);
+    }
   };
 
   var $list = $('#grid'),
