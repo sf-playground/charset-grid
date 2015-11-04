@@ -116,7 +116,7 @@ jQuery(document).ready(function () {
         if (typeof k[b] === 'undefined') {
           k[b] = {};
         }
-        if (k[b][d]) {
+        if (d !== 'w' && k[b][d]) {
           console.info("Found cache, returning " + k[b][d]);
           return k[b][d];
         }
@@ -193,14 +193,14 @@ jQuery(document).ready(function () {
       if (subset !== $("#subset").val()) {
         return;
       }
-      var $charlist = $('<ul>');
-      $('<li>')
-        .append($('<strong>').text(face))
-        .append($charlist)
-        .appendTo($list);
+      var $charlist = $('<ul>'),
+        chars = subsets[subset].length,
+        chars_missing = 0;
       for (var i in subsets[subset]) {
         var data = subsets[subset][i];
         var included = (skip.indexOf(data.hex) > -1 || fontSupportsChar(face, data.char));
+        included || chars_missing++;
+
         console.info(face + " supports " + data.char + ": " + (included?"yes":"no"));
 
         $('<li>')
@@ -213,6 +213,14 @@ jQuery(document).ready(function () {
           .append($('<em>').text(data.hex))
           .appendTo($charlist);
       }
+      $('<li>')
+        .append($('<strong>')
+          .attr('title', chars_missing + ' of ' + chars + ' characters are missing in ' + face)
+          .html('<span>' + (Math.round((chars - chars_missing) / chars * 1000) / 10) + '%</span> ' + face)
+        )
+        .addClass(chars_missing > 0 ? 'incomplete' : 'complete')
+        .append($charlist)
+        .appendTo($list);
     };
 
   var explodeSubsets = function () {

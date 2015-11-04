@@ -4,6 +4,7 @@ body {
 	margin: 0;
 	position: relative;
 	min-height: 60em;
+	padding-bottom: 5em;
 }
 
 .wrapper {
@@ -84,7 +85,7 @@ html.wf-loading .styled-select.face {
 #grid > li {
 	margin: 0 .5em .5em 0;
 	padding: .5em 5px;
-	width: 129px;
+	width: 192px;
 	float: left;
 	background: #ccc;
 	position: relative;
@@ -96,18 +97,28 @@ html.wf-loading .styled-select.face {
 	width: 100%;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	font-weight: 400;
+	padding-bottom: .5em;
+}
+
+#grid li strong span {
+	color: red;
+}
+
+#grid li.complete strong span {
+	color: #0b0;
 }
 
 #grid li ul {
 	margin: 0;
 	padding: 0;
 	line-height: 0;
-	width: 129px;
+	width: 192px;
 }
 
 #grid li li {
 	display: inline-block;
-	width: 4px;
+	width: 12px;
 	height: 4px;
 	overflow: hidden;
 	cursor: crosshair;
@@ -121,7 +132,7 @@ html.wf-loading .styled-select.face {
 
 .view-Table #grid li li,
 .view-Details #grid li li {
-	width: 8px;
+	width: 12px;
 	height: 12px;
 	font-size: .5em;
 	position: relative;
@@ -160,6 +171,7 @@ html.wf-loading .styled-select.face {
 	font-size: 2em;
 	padding-top: .4em;
 	line-height: 1.2;
+	font-family: 'Times New Roman', Times, serif;
 }
 
 .view-Details #grid li li em {
