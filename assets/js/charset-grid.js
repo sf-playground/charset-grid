@@ -99,7 +99,7 @@ jQuery(document).ready(function () {
         '2300-237B', '237D-239A', '2440-244A', '2500-2595', '25A0-25F7', '2600-2613',
         '2619-2671', 'FB00-FB06', 'FB13-FB17', 'FE20-FE23', 'FFF9-FFFD']
     },
-    skip = ['0020', '00AD'],
+    skip = ['0020', '007F', '00AD'], // space, DELETE, soft-hyphen
     fonts = [];
 
   /* Font, char checkers */
