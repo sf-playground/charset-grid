@@ -252,6 +252,10 @@ jQuery(document).ready(function () {
         for (i = 0; i < $items.length; i++) {
           $item = $items.eq(i);
           // insert new item before first item that's larger than the new one
+          if ($(document.body).hasClass('sort-percentage') && $item.attr('data-percentage') < percentage) {
+            $item_new.insertBefore($item);
+            break;
+          }
           if ($item.attr('data-font') > face) {
             $item_new.insertBefore($item);
             break;
@@ -314,6 +318,17 @@ jQuery(document).ready(function () {
       .removeClass('view-Details')
       .removeClass('view-Rows')
       .addClass('view-' + view);
+  })
+  .trigger('change');
+  $('#sort').change(function (ev) {
+    var sort = $(this).val(),
+      displayVal = $(this).find('option:selected').text();
+    $(this).parent().find('span').text(displayVal);
+    $(document.body)
+      .removeClass('sort-alphabetically')
+      .removeClass('sort-percentage')
+      .addClass('sort-' + sort);
+    $('#subset').trigger('change');
   })
   .trigger('change');
 
