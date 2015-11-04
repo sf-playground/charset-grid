@@ -100,6 +100,7 @@ jQuery(document).ready(function () {
         '2619-2671', 'FB00-FB06', 'FB13-FB17', 'FE20-FE23', 'FFF9-FFFD']
     },
     skip = ['0020', '007F', '00AD'], // space, DELETE, soft-hyphen
+    scores = ['A+', 'A', 'B', 'C', 'D', 'E', 'F'],
     fonts = [];
 
   /* Font, char checkers */
@@ -206,7 +207,12 @@ jQuery(document).ready(function () {
       }
       var $charlist = $('<ul>'),
         chars = subsets[subset].length,
-        chars_missing = 0;
+        chars_missing = 0,
+        $items = $list.find('> li'),
+        $item,
+        percentage,
+        score,
+        $item_new;
       for (var i in subsets[subset]) {
         var data = subsets[subset][i];
         var included = (skip.indexOf(data.hex) > -1 || fontSupportsChar(face, data.char));
@@ -224,14 +230,37 @@ jQuery(document).ready(function () {
           .append($('<em>').text(data.hex))
           .appendTo($charlist);
       }
-      $('<li>')
+      percentage = Math.round((chars - chars_missing) / chars * 1000) / 10;
+      score = Math.ceil(6 * (chars_missing / chars));
+      $item_new = $('<li>')
         .append($('<strong>')
           .attr('title', chars_missing + ' of ' + chars + ' characters are missing in ' + face)
-          .html('<span>' + (Math.round((chars - chars_missing) / chars * 1000) / 10) + '%</span> ' + face)
+          .html('<span>' + percentage + '%</span> ' + face)
         )
+        .append($('<i>').text(scores[score]))
         .addClass(chars_missing > 0 ? 'incomplete' : 'complete')
-        .append($charlist)
-        .appendTo($list);
+        .addClass('score-' + score)
+        .attr('data-percentage', percentage)
+        .attr('data-font', face)
+        .append($charlist);
+
+      debug && console.info('inserting ' + face);
+
+      if (!$items.length) {
+        $list.append($item_new);
+      } else {
+        for (i = 0; i < $items.length; i++) {
+          $item = $items.eq(i);
+          // insert new item before first item that's larger than the new one
+          if ($item.attr('data-font') > face) {
+            $item_new.insertBefore($item);
+            break;
+          }
+        };
+        if (i === $items.length) {
+          $list.append($item_new);
+        }
+      }
     };
 
   var explodeSubsets = function () {
@@ -280,6 +309,7 @@ jQuery(document).ready(function () {
     var view = $(this).val();
     $(this).parent().find('span').text(view);
     $(document.body)
+      .removeClass('view-Score')
       .removeClass('view-Table')
       .removeClass('view-Details')
       .removeClass('view-Rows')
