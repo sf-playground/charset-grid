@@ -127,7 +127,7 @@ html.wf-loading .styled-select.face {
 
 #grid li li span,
 #grid li li em,
-#grid li li i,
+#grid li i,
 .view-Score #grid li ul {
 	display: none;
 }
