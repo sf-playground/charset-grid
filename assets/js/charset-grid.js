@@ -190,7 +190,7 @@ jQuery(document).ready(function () {
           ? { // webfont included in this repo
             custom: {
               families: [face],
-              urls: ['assets/fonts/local/' + face_folder + '/webfont.css']
+              urls: ['assets/fonts/local/' + face_folder + '/webfont.css?ver=20170920-2']
             }
           }
           : webfonts_remote.indexOf(face) > -1
