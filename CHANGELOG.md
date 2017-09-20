@@ -1,6 +1,9 @@
 charset-grid - changelog
 ========================
 
+0.5.1 (2017-09-20)
+- Link to correct raw Hack subset font files without redirection
+
 0.5.0 (2017-09-20)
 + Add Fira Code, Input, Hack subsets
 
